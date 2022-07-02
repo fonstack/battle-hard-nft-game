@@ -10,6 +10,8 @@ import 'hardhat/console.sol';
 import './libraries/Base64.sol';
 
 contract BattleHard is ERC721 {
+    uint256 private randomSeed;
+
     struct CharacterAttributes {
         uint256 characterIndex;
         string name;
@@ -18,6 +20,14 @@ contract BattleHard is ERC721 {
         uint256 maxHp;
         uint256 attackDamage;
         uint256 criticalChance;
+    }
+
+    struct BigBoss {
+        string name;
+        string imageURI;
+        uint256 hp;
+        uint256 maxHp;
+        uint256 attackDamage;
     }
 
     using Counters for Counters.Counter;
@@ -31,13 +41,27 @@ contract BattleHard is ERC721 {
     // NFT owner => NFT tokenId
     mapping(address => uint256) public nftHolders;
 
+    BigBoss public bigBoss;
+
     constructor(
         string[] memory characterNames,
         string[] memory characterImageURIs,
         uint256[] memory characterHps,
         uint256[] memory characterAttackDmgs,
-        uint256[] memory characterCriticalChances
+        uint256[] memory characterCriticalChances,
+        string memory bossName,
+        string memory bossImageURI,
+        uint256 bossHp,
+        uint256 bossAttackDamage
     ) ERC721('Heroes', 'HERO') {
+        // Seed initialization
+        randomSeed = (block.timestamp + block.difficulty) % 100;
+
+        // Boss initialization
+        bigBoss = BigBoss({name: bossName, imageURI: bossImageURI, hp: bossHp, maxHp: bossHp, attackDamage: bossAttackDamage});
+        console.log('Done initializing boss %s w/ HP %s, img %s', bigBoss.name, bigBoss.hp, bigBoss.imageURI);
+
+        // Characters initialization
         for (uint256 i = 0; i < characterNames.length; i += 1) {
             defaultCharacters.push(
                 CharacterAttributes({
@@ -103,7 +127,7 @@ contract BattleHard is ERC721 {
                 strMaxHp,
                 '}, { "trait_type": "Attack Damage", "value": ',
                 strAttackDamage,
-                '}, { "trait_type": "Critical Chance", "value": ',
+                '}, { "trait_type": "Critical Chance", "display_type": "boost_percentage", "value": ',
                 strCriticalChance,
                 '} ]}'
             )
@@ -112,5 +136,48 @@ contract BattleHard is ERC721 {
         string memory output = string(abi.encodePacked('data:application/json;base64,', json));
 
         return output;
+    }
+
+    function attackBoss() public {
+        // Get the state of the player's NFT.
+        uint256 nftTokenIdOfPlayer = nftHolders[msg.sender];
+        CharacterAttributes storage player = nftHolderAttributes[nftTokenIdOfPlayer];
+
+        console.log('\nPlayer w/ character %s about to attack. Has %s HP and %s AD', player.name, player.hp, player.attackDamage);
+        console.log('Boss %s has %s HP and %s AD', bigBoss.name, bigBoss.hp, bigBoss.attackDamage);
+
+        // Make sure the player has more than 0 HP.
+        require(player.hp > 0, 'Error: character must have HP to attack boss.');
+
+        // Make sure the boss has more than 0 HP.
+        require(bigBoss.hp > 0, 'Error: boss must have HP to attack character.');
+
+        // Allow player to attack boss.
+        randomSeed = (block.difficulty + block.timestamp + randomSeed) % 100;
+        bool isCritical = randomSeed <= player.criticalChance;
+        uint256 newPlayerAttackDamage = isCritical ? player.attackDamage * 2 : player.attackDamage;
+
+        if (isCritical) {
+            console.log('Player will attack boss with a critical hit!');
+        }
+
+        if (bigBoss.hp < newPlayerAttackDamage) {
+            bigBoss.hp = 0;
+        } else {
+            bigBoss.hp = bigBoss.hp - newPlayerAttackDamage;
+        }
+
+        // Allow boss to attack player.
+        if (bigBoss.hp > 0) {
+            if (player.hp < bigBoss.attackDamage) {
+                player.hp = 0;
+            } else {
+                player.hp = player.hp - bigBoss.attackDamage;
+            }
+        }
+
+        // Console for ease.
+        console.log("\nPlayer attacked boss. New boss hp: %s", bigBoss.hp);
+        console.log("Boss attacked player. New player hp: %s\n", player.hp);
     }
 }
