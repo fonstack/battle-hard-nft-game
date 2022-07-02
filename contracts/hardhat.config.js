@@ -21,7 +21,11 @@ module.exports = {
   solidity: "0.8.1",
   networks: {
     goerli: {
-      url: process.env.STAGING_ALCHEMY_KEY,
+      url: process.env.STAGING_ALCHEMY_GOERLI_KEY,
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    rinkeby: {
+      url: process.env.STAGING_ALCHEMY_RINKEBY_KEY,
       accounts: [process.env.PRIVATE_KEY],
     },
   },

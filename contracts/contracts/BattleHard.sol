@@ -93,7 +93,7 @@ contract BattleHard is ERC721 {
             abi.encodePacked(
                 '{"name": "',
                 charAttributes.name,
-                ' -- NFT #: ',
+                ' #',
                 Strings.toString(_tokenId),
                 '", "description": "This is an NFT that lets people play in the game Battle Hard!", "image": "',
                 charAttributes.imageURI,
