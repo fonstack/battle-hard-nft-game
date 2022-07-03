@@ -155,16 +155,19 @@ contract BattleHard is ERC721 {
         // Allow player to attack boss.
         randomSeed = (block.difficulty + block.timestamp + randomSeed) % 100;
         bool isCritical = randomSeed <= player.criticalChance;
-        uint256 newPlayerAttackDamage = isCritical ? player.attackDamage * 2 : player.attackDamage;
+        uint256 finalPlayerAttackDamage = isCritical ? player.attackDamage * 2 : player.attackDamage;
+
+        console.log('Is critical %s, randomseed %s, critical chance %s', isCritical, randomSeed, player.criticalChance);
+
 
         if (isCritical) {
             console.log('Player will attack boss with a critical hit!');
         }
 
-        if (bigBoss.hp < newPlayerAttackDamage) {
+        if (bigBoss.hp < finalPlayerAttackDamage) {
             bigBoss.hp = 0;
         } else {
-            bigBoss.hp = bigBoss.hp - newPlayerAttackDamage;
+            bigBoss.hp = bigBoss.hp - finalPlayerAttackDamage;
         }
 
         // Allow boss to attack player.
