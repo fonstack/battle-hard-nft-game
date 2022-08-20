@@ -43,6 +43,10 @@ contract BattleHard is ERC721 {
 
     BigBoss public bigBoss;
 
+    // Events
+    event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
+    event AttackComplete(address sender, uint256 newBossHp, uint256 newPlayerHp);
+
     constructor(
         string[] memory characterNames,
         string[] memory characterImageURIs,
@@ -103,6 +107,8 @@ contract BattleHard is ERC721 {
 
         nftHolders[msg.sender] = newNFTId;
         _tokenIds.increment();
+
+        emit CharacterNFTMinted(msg.sender, newNFTId, _characterIndex);
     }
 
     function tokenURI(uint256 _tokenId) public view override returns (string memory) {
@@ -159,7 +165,6 @@ contract BattleHard is ERC721 {
 
         console.log('Is critical %s, randomseed %s, critical chance %s', isCritical, randomSeed, player.criticalChance);
 
-
         if (isCritical) {
             console.log('Player will attack boss with a critical hit!');
         }
@@ -180,7 +185,29 @@ contract BattleHard is ERC721 {
         }
 
         // Console for ease.
-        console.log("\nPlayer attacked boss. New boss hp: %s", bigBoss.hp);
-        console.log("Boss attacked player. New player hp: %s\n", player.hp);
+        console.log('\nPlayer attacked boss. New boss hp: %s', bigBoss.hp);
+        console.log('Boss attacked player. New player hp: %s\n', player.hp);
+
+        emit AttackComplete(msg.sender, bigBoss.hp, player.hp);
+    }
+
+    function checkIfUserHasNFT() public view returns (CharacterAttributes memory) {
+        // Get the tokenId of the user's character NFT
+        uint256 userNftTokenId = nftHolders[msg.sender];
+        // If the user has a tokenId in the map, return their character.
+        if (userNftTokenId > 0) {
+            return nftHolderAttributes[userNftTokenId];
+        } else {
+            CharacterAttributes memory emptyStruct;
+            return emptyStruct;
+        }
+    }
+
+    function getAllDefaultCharacters() public view returns (CharacterAttributes[] memory) {
+        return defaultCharacters;
+    }
+
+    function getBigBoss() public view returns (BigBoss memory) {
+        return bigBoss;
     }
 }
