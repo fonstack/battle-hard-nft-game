@@ -1,4 +1,4 @@
-# BattleHard Game Project
+# Battle Hard NFT and Web3 Game
 Frontend Web3 Project for BattleHard Game
 
 ### **Welcome 👋**

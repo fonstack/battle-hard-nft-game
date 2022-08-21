@@ -45,7 +45,7 @@ contract BattleHard is ERC721 {
 
     // Events
     event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
-    event AttackComplete(address sender, uint256 newBossHp, uint256 newPlayerHp);
+    event AttackComplete(address sender, uint256 newBossHp, uint256 newPlayerHp, bool isCriticalHit);
 
     constructor(
         string[] memory characterNames,
@@ -160,12 +160,12 @@ contract BattleHard is ERC721 {
 
         // Allow player to attack boss.
         randomSeed = (block.difficulty + block.timestamp + randomSeed) % 100;
-        bool isCritical = randomSeed <= player.criticalChance;
-        uint256 finalPlayerAttackDamage = isCritical ? player.attackDamage * 2 : player.attackDamage;
+        bool isCriticalHit = randomSeed <= player.criticalChance;
+        uint256 finalPlayerAttackDamage = isCriticalHit ? player.attackDamage * 2 : player.attackDamage;
 
-        console.log('Is critical %s, randomseed %s, critical chance %s', isCritical, randomSeed, player.criticalChance);
+        console.log('Is critical %s, randomseed %s, critical chance %s', isCriticalHit, randomSeed, player.criticalChance);
 
-        if (isCritical) {
+        if (isCriticalHit) {
             console.log('Player will attack boss with a critical hit!');
         }
 
@@ -188,7 +188,7 @@ contract BattleHard is ERC721 {
         console.log('\nPlayer attacked boss. New boss hp: %s', bigBoss.hp);
         console.log('Boss attacked player. New player hp: %s\n', player.hp);
 
-        emit AttackComplete(msg.sender, bigBoss.hp, player.hp);
+        emit AttackComplete(msg.sender, bigBoss.hp, player.hp, isCriticalHit);
     }
 
     function checkIfUserHasNFT() public view returns (CharacterAttributes memory) {

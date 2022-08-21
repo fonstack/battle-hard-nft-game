@@ -1,18 +1,2 @@
-body,
-html {
-  margin: 0;
-}
-
-body {
-  padding: 0;
-  font-family: -apple-system, Inter, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
-    'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@500;600&display=swap'); /* 'Rubik' */
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand+SC&display=swap'); /* 'Patrick Hand SC' */
