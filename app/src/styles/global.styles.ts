@@ -7,11 +7,21 @@ export const GlobalStyle = createGlobalStyle`
     ${variables}
     ${reset}
 
-    body {
+    body, #root {
         font-family: 'Rubik', sans-serif;
         min-height: 100vh;
         background-color: var(--color-dark-gray);
         color: var(--color-text);
+    }
+
+    .max-width-wrapper, .max-width-wrapper-inner {
+        &.fh {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
     }
 
     .max-width-wrapper {

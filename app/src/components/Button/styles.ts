@@ -3,7 +3,7 @@ import { getSpacing, getFontSize } from '../../styles';
 
 export const StyledButton = styled.button<{ isLarge?: boolean }>(
   ({ isLarge }) => css`
-    padding: ${getSpacing(2.2)} ${getSpacing(5)};
+    padding: ${getSpacing(2.5)} ${getSpacing(7)};
     font-size: ${getFontSize(isLarge ? 'large' : 'medium')};
     border: none;
     border-radius: 10px;

@@ -1,7 +1,7 @@
 export type FontSizeToken = 'small' | 'medium' | 'large' | 'h1' | 'h2';
 
 const fontSizes: Record<FontSizeToken, string> = {
-  h1: '4rem',
+  h1: '3rem',
   h2: '1.375rem',
   large: '1.1875rem',
   medium: '1rem',
